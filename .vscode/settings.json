@@ -1,0 +1,9 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "builder/Cargo.toml"
+    ],
+    "rust-analyzer.check.allTargets": true,
+    "rust-analyzer.diagnostics.disabled": [
+        "unlinked-file"
+    ],
+}
