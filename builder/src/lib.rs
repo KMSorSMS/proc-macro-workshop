@@ -47,6 +47,13 @@ pub fn derive(input: TokenStream) -> TokenStream {
                 self.#idents = Some(#idents);
                 self
             })*
+            pub fn build(&mut self) -> Result<#name, Box<dyn std::error::Error>> {
+                Ok(#name {
+                    #(
+                        #idents: self.#idents.clone().ok_or("missing field")?,
+                    )*
+                })
+            }
         }
 
     };
