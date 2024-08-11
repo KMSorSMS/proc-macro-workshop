@@ -1,6 +1,7 @@
 use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span};
 use quote::quote;
+use syn::Type;
 
 #[proc_macro_derive(Builder)]
 pub fn derive(input: TokenStream) -> TokenStream {
@@ -17,8 +18,8 @@ pub fn derive(input: TokenStream) -> TokenStream {
         _ => panic!("Only named fields are supported"),
     };
     // add option to each field
-    let idents: Vec<_> = fields.iter().map(|f| &f.ident).collect();
-    let types: Vec<_> = fields.iter().map(|f| &f.ty).collect();
+    let idents: Vec<&Option<Ident>> = fields.iter().map(|f| &f.ident).collect();
+    let types: Vec<&Type> = fields.iter().map(|f| &f.ty).collect();
     let fields_option_define = quote! {
         #(
             #idents: Option<#types>,
@@ -40,6 +41,12 @@ pub fn derive(input: TokenStream) -> TokenStream {
         }
         pub struct #new_name {
             #fields_option_define
+        }
+        impl #new_name {
+            #(fn #idents(&mut self, #idents: #types) -> &mut Self {
+                self.#idents = Some(#idents);
+                self
+            })*
         }
 
     };
